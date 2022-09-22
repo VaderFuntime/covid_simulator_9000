@@ -1,0 +1,47 @@
+shai.kelner, roeykelner
+===============================================================================
+Shai Kelner, ID 318377405, shai.kelner@mail.huji.ac.il
+Roey Kelner, ID 316480193, roey.kelner@mail.huji.ac.il
+===============================================================================
+
+
+                           Project 9 - A game written in jack
+                           ----------------------------------
+ 
+Submitted Files
+---------------
+GameManager.jack - The Game Class that runs the game 
+Main.jack - The main jack file
+Person.jack - The class that creates each person, each person has fields that tells us if he is vaxxed,
+infected or neither.
+Population.jack - The Class that manage all of the people.
+RandGen.jack - The class that generates a random number.
+We use a random number in order to determine whether a sick person died, 
+healed or is still sick. We also use a random number to determine whether or not a healthy person, 
+that came in contact with a sick person, got infected himself.
+
+
+
+Remarks
+-------
+We created a simulation that simulates a group of people, some vaccinated, some sick and some ordinary people.
+When a sick person is in close proximity to a normal / vaccinated person, he may infect him.
+The level of proximity can be selected on the login screen, level 10 being the most contagious level. 
+Also, a vaccinated / healthy person from the disease has a lower chance of getting sick again, compared to an
+ unvaccinated person.
+Also, when choosing the number of people, in case a person tries to enter a number that is not written
+in the instructions, the number will not be accepted and will get deleted until we get the correct number.  
+We wanted to emphasize that even if there are no more sick people, 
+and everyone is healthy there are still people who have lost their lives due to the disease, 
+and it should be remembered that "victory" also has a price.
+In the end of the simulation the user can press R to reastart the game or Q to quit.
+* We used all OS classes.
+* We write our program in a modular way.
+
+
+
+
+
+
+
+

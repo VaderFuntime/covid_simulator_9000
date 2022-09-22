@@ -1,0 +1,140 @@
+class Population{
+    field Array people;
+    field int size, num_infected, num_vaxed, num_dead;
+
+
+    constructor Population new(int Asize, int Anum_infected, int Anum_vaxed){
+        let num_infected = Anum_infected;
+        let num_vaxed = Anum_vaxed;
+        let num_dead = 0;
+        let size = Asize;
+        let people =  Array.new(size);
+        do createPeople();
+        return this;
+    }
+
+    method void createPeople(){
+        var int i;
+        var int randX, randY, randV_x, randV_y;
+        let i=0;
+
+        //Creates the num_infected people
+        while (i<num_infected){
+            let randX = RandGen.rand_in_range(GameManager.get_screen_left()+10, GameManager.get_screen_right()-10);
+            let randY = RandGen.rand_in_range(GameManager.get_screen_top()+10, GameManager.get_screen_bottom()-10);
+            let randV_x = RandGen.rand_in_range(-4,4);
+            let randV_y = RandGen.rand_in_range(-4,4);
+            let people[i] = Person.new(randX, randY, randV_x, randV_y, true, false);
+            let i = i+1;
+        }
+
+        //Creates the vaxed people
+        while (i<(num_infected + num_vaxed)){
+            let randX = RandGen.rand_in_range(GameManager.get_screen_left()+10, GameManager.get_screen_right()-10);
+            let randY = RandGen.rand_in_range(GameManager.get_screen_top()+10, GameManager.get_screen_bottom()-10);
+            let randV_x = RandGen.rand_in_range(-4,4);
+            let randV_y = RandGen.rand_in_range(-4,4);
+            let people[i] = Person.new(randX, randY, randV_x, randV_y, false, true);
+            let i = i+1;
+        }
+
+        //Creates the healthy people
+        while (i<size){
+            let randX = RandGen.rand_in_range(GameManager.get_screen_left()+10, GameManager.get_screen_right()-10);
+            let randY = RandGen.rand_in_range(GameManager.get_screen_top()+10, GameManager.get_screen_bottom()-10);
+            let randV_x = RandGen.rand_in_range(-4,4);
+            let randV_y = RandGen.rand_in_range(-4,4);
+            let people[i] = Person.new(randX, randY, randV_x, randV_y, false, false);
+            let i = i+1;
+        }
+        
+        return;
+    }
+
+    //Moves all people according to their speeds
+    method void movePeople(){
+        var int i, res, wait_time;
+        var Person cur_p;
+        let i=0;
+        while (i<size){
+            let cur_p = people[i];
+            let res = cur_p.move();
+            if (res=1){
+                let num_infected = num_infected -1;
+            }
+
+            if (res=2){
+                let num_infected = num_infected -1;
+                let num_dead = num_dead +1;
+            }
+
+            if ((cur_p.get_is_infected())&(~(cur_p.get_is_dead()))){
+                let num_infected = spread(cur_p.getX(), cur_p.getY()) + num_infected;
+            }
+
+            let i = i+1;
+        }
+        do Sys.wait(calculate_wait_time());
+        return;
+    }
+
+    method int spread(int x, int y){
+        var int i, sum;
+        var Person cur_p;
+        let i =0;
+        let sum = 0;
+        while (i<size){
+            let cur_p = people[i];
+            if(cur_p.check_and_expose(x, y)){
+                let sum = sum+1;
+            }
+            let i = i+1;
+        }
+
+        return sum;
+    }
+
+    method int get_num_dead(){
+        return num_dead;
+    }
+
+    method int get_num_infected(){
+        return num_infected;
+    }
+
+    method int calculate_wait_time(){
+        if (num_infected = 0){
+            return 50;
+        }
+
+        if (num_infected =1){
+            return 25;
+        }
+
+        if (num_infected = 2){
+            return 12;
+        }
+
+        if (num_infected = 3){
+            return 6;
+        }
+
+        return 0;
+        
+    }
+
+    method void dispose(){
+        var int i;
+        var Person p;
+        let i=0;
+        while(i<size){
+            let p = people[i];
+            do p.dispose();
+            let i = i+1;
+        }
+        do people.dispose();
+
+        do Memory.deAlloc(this);
+        return;
+    }
+}

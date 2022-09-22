@@ -1,0 +1,17 @@
+class Main {
+    
+    function void main () {
+        var boolean restart;
+        let restart = true;
+        while(restart){
+        do GameManager.input_screen();
+        do GameManager.start_game();
+        let restart = GameManager.end_game();
+        }
+
+        do Screen.clearScreen();
+        return;
+    }
+
+
+}

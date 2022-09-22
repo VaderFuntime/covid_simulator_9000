@@ -1,0 +1,48 @@
+class RandGen {
+    static int seed, M, A, R,Q;
+
+
+    function int mod(int a, int b) {
+      var int d;
+      var int r;
+      let d = Math.divide(a,b);
+      let r = a - (b * d);
+      return r;
+  }
+
+    function int randM() {
+        var int test;
+        let test=(A*(RandGen.mod(seed,Q)))-(R*(seed/Q));
+        if(test<0) {
+           let seed=test+M;
+        }
+        else {
+           let seed=test;
+        }
+        return seed;
+    }
+
+    function void set_seed(int newSeed) {
+      let seed = newSeed;
+      if(seed=0) {
+         let seed=1;
+      }
+      let M=32749;
+      let A=219;
+      let Q=M/A;
+      let R=RandGen.mod(M,A);
+      return;
+  }
+
+
+    function int rand_in_range(int low, int high) {
+       var int scale;
+       let scale = (M / (high - low + 1));
+       return (RandGen.randM() / scale) + low;
+    }
+
+
+
+}
+
+

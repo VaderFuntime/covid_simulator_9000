@@ -1,0 +1,226 @@
+class Person {
+    field int x, y, v_x, v_y;
+    field boolean is_infected, is_vaxed, is_dead, is_recovered;
+    constructor Person new(int Ax, int Ay, int Av_x, int Av_y, boolean Ais_infected, boolean Ais_vaxed){
+        let x=Ax;
+        let y=Ay;
+        let v_x = Av_x;
+        let v_y = Av_y;
+        let is_infected = Ais_infected;
+        let is_vaxed = Ais_vaxed;
+        let is_dead = false;
+        let is_recovered = false;
+        
+        do draw();
+        return this;
+    }
+
+    method int getX(){
+        return x;
+    }
+
+    method int getY(){
+        return y;
+    }
+
+    method void draw(){
+
+        if (~(is_infected)){
+            
+            if (is_vaxed){
+                do draw_vaxed();
+                return;
+            }
+
+            if (is_recovered){
+                do draw_recovered();
+                return;
+            }
+            do draw_regular();
+    
+        }
+
+        else { //is infected!
+            do draw_sick();
+        }
+        return;
+    }
+
+    method void draw_vaxed() { //White circle with v
+        do Screen.setColor(true);
+        do Screen.drawCircle(x,y,8);
+        do Screen.setColor(false);
+        do Screen.drawCircle(x,y,7);
+        do Screen.setColor(true);
+        do Screen.drawLine(x-5,y-6,x,y+8);
+        do Screen.drawLine(x+5,y-6,x,y+8);
+		return;
+	}
+
+
+    method void draw_sick() { //Black circle with X
+        do Screen.setColor(true);
+        do Screen.drawCircle(x,y,8);
+        do Screen.setColor(false);
+        do Screen.drawLine(x-6,y-8,x+6,y+8);
+        do Screen.drawLine(x-6,y+8,x+6,y-8);
+		return;
+	}
+
+    method void draw_regular(){
+        do Screen.setColor(true);
+        do Screen.drawCircle(x,y,8);
+        do Screen.setColor(false);
+        do Screen.drawCircle(x,y,7);
+        do Screen.setColor(true);
+        return;
+    }
+
+    method void draw_recovered() { //White circle with +
+        do Screen.setColor(true);
+        do Screen.drawCircle(x,y,8);
+        do Screen.setColor(false);
+        do Screen.drawCircle(x,y,7);
+        do Screen.setColor(true);
+        do Screen.drawLine(x-8,y,x+8,y);
+        do Screen.drawLine(x,y-8,x,y+8);
+		return;
+	}
+    
+    
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawCircle(x, y, 8);
+        return;
+    }
+
+    //returns 1 if revovered, 2 if died, 0 otherwise
+    method int move(){
+        if (~(is_dead)){
+            do erase();
+            if (~(x + v_x +8 < GameManager.get_screen_right())){
+                let v_x = -v_x; 
+            }
+
+            if (~(x +v_x -8 > GameManager.get_screen_left())){
+                let v_x = -v_x; 
+            }
+
+            if (~(y+v_y+8 < GameManager.get_screen_bottom())){
+                let v_y = -v_y; 
+            }
+
+            if (~(y+v_y-8 > GameManager.get_screen_top())){
+                let v_y = -v_y; 
+            }
+
+            let x = x+v_x;
+            let y = y+v_y;
+
+            do draw();
+
+            if (is_infected){
+                if (fight_the_disease()){
+                    return 1;
+                }
+                
+                if (another_day_to_live()){
+                    return 2;
+                }
+            }
+        }
+        return 0;
+    }
+
+    method void infect(){
+        let is_infected = true;
+        return;
+    }
+
+    method void disinfect(){
+        let is_infected = false;
+        return;
+    }
+
+    method boolean get_is_infected(){
+        return is_infected;
+    }
+
+    method boolean get_is_dead(){
+        return is_dead;
+    }
+
+    method boolean is_nearby(int Ax,int Ay)
+    {
+        var int x_dist, y_dist, dist, radius;
+        let radius = GameManager.get_infection_radius();
+        let x_dist= Math.abs((x-Ax)); 
+        let y_dist= Math.abs((y-Ay));
+        return ((x_dist<radius)&(y_dist<radius));
+    }
+
+
+    method boolean exposed(){
+        var int x;
+        if ((is_vaxed)|(is_recovered)){
+            let x = RandGen.rand_in_range(1, 6*GameManager.get_infection_prob());
+            
+        }
+
+        else {
+            let x = RandGen.rand_in_range(1, GameManager.get_infection_prob());
+        }
+
+        if (x=1){
+            let is_infected = true;
+            let is_recovered = false;
+            return true;
+        }
+        return false;
+    }
+
+    method boolean check_and_expose(int Ax, int Ay){
+        var boolean infected;
+        if (is_infected|is_dead){
+            return false;
+        }
+        let infected = false;
+        if (is_nearby(Ax, Ay)){
+            let infected = exposed();
+        }
+
+        return infected;
+        
+    }
+
+    method boolean another_day_to_live(){
+        var int x;
+        let x = RandGen.rand_in_range(200, 1300);
+        if (x =666){
+            let is_dead = true;
+            do erase();
+            
+        }
+        return is_dead;
+    } 
+
+    method boolean fight_the_disease(){
+        var int x;
+        let x = RandGen.rand_in_range(200, 800);
+        if (x =777){
+            let is_recovered = true;
+            let is_infected = false;
+        }
+        return is_recovered;
+    }
+
+    method void dispose(){
+        do Memory.deAlloc(this);
+        return;
+    }
+
+
+
+
+}
